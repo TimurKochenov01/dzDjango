@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Все сотрудники</title>
+    <style>
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="nav">
+            <a href="{% url 'home' %}">Главная</a>
+            <a href="{% url 'employee_list' %}">Все сотрудники</a>
+        </div>
+
+        <h1>👥 Все сотрудники компании</h1>
+
+        <div class="employee-grid">
+            {% for employee in page_obj %}
+            <div class="employee-card" onclick="location.href='{% url employee.id %}';" style="cursor: pointer;">
+                <!-- Первое изображение -->
+                {% with employee.get_first_image as first_image %}
+                    {% if first_image %}
+                        <img src="{{ first_image.image.url }}" alt="{{ employee.first_name }} {{ employee.last_name }}">
+                    {% else %}
+                        <img src="https://via.placeholder.com/300x200/cccccc/969696?text=No+Image" alt="No image">
+                    {% endif %}
+                {% endwith %}
+                
+                <div class="employee-name">{{ employee.first_name }} {{ employee.last_name }}</div>
+                <div class="employee-skills">{{ employee.skills|truncatewords:6 }}</div>
+                <div class="employee-experience">Стаж: {{ employee.get_work_experience_days }} дней</div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Пагинация -->
+        <div class="pagination">
+            {% if page_obj.has_previous %}
+                <a href="?page=1">« Первая</a>
+                <a href="?page={{ page_obj.previous_page_number }}">Назад</a>
+            {% endif %}
+
+            <span class="current">
+                Страница {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}
+            </span>
+
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}">Вперед</a>
+                <a href="?page={{ page_obj.paginator.num_pages }}">Последняя »</a>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>
